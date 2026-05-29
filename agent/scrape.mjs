@@ -118,6 +118,8 @@ function parsePosted(raw, today) {
   }
 }
 const iso = (d) => d.toISOString().slice(0, 10);
+// 统一去重键:公司 + 标题前缀(规范化),用于跨源(官网/LinkedIn)去重同一岗位
+const fpOf = (short, title) => `${short}|${title}`.toLowerCase().replace(/[^a-z0-9|]+/g, "").slice(0, 64);
 
 // 从任意 JSON 对象里模糊提取职位字段(适配 Workday / Greenhouse / Lever / 自建)
 function pick(o, keys) {
@@ -387,7 +389,8 @@ function normalize(r, bank, today) {
     keyReqs: [sector, r.level || "VP / ED", "Hong Kong"].filter(Boolean),
     applyUrl: r.url || bank.url,
     isNew: postedDaysAgo <= 1,
-    _fp: `${bank.short}|${r.title}|${r.location}`.toLowerCase(),
+    source: bank.source || "官网",
+    _fp: fpOf(bank.short, r.title),
   };
 }
 
@@ -401,17 +404,95 @@ function applyHot(jobs) {
   return jobs;
 }
 
+// ---------- LinkedIn 聚合源 ----------
+// 用 LinkedIn 无需登录的公开职位搜索接口(jobs-guest),聚合全网公司的香港 IBD 岗位。
+// 注意:LinkedIn ToS 技术上不鼓励自动抓取,这里仅用公开 guest 端点 + 礼貌限速,
+// 抓到的岗位会标注来源为 LinkedIn,申请链接指向 LinkedIn。
+const LI_KEYWORDS = [
+  "Investment Banking Vice President",
+  "M&A Vice President",
+  "Equity Capital Markets Vice President",
+  "Debt Capital Markets Vice President",
+  "Leveraged Finance Vice President",
+  "Coverage Banker Vice President",
+];
+const LI_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+// 排除猎头 / 招聘代理(LinkedIn 上大量转贴)
+const RECRUITERS = /peoplesearch|michael page|robert walters|morgan mckinley|\bhays\b|randstad|adecco|kelly services|selby jennings|charterhouse|ambition|connectedgroup|links international|pinpoint|gravitas|\bhudson\b|nelson|cornerstone|recruit|staffing|talent acquisition|search (firm|partners|group)|headhunt|manpower|kelly|jenrick|capstone|eames/i;
+
+// 公司名 → 简称(已知大行用固定缩写,未知公司生成首字母缩写)
+const NAME_SHORT = [
+  [/goldman/i, "GS"], [/morgan stanley/i, "MS"], [/j\.?p\.?\s?morgan|jpmorgan/i, "JPM"],
+  [/\bciti/i, "Citi"], [/bank of america|merrill/i, "BofA"], [/\bubs\b/i, "UBS"],
+  [/barclays/i, "BARC"], [/deutsche/i, "DB"], [/\bhsbc\b/i, "HSBC"], [/standard chartered/i, "SC"],
+  [/\bcicc\b|china international capital/i, "CICC"], [/citic/i, "CITICS"], [/huatai/i, "HTSC"],
+  [/haitong/i, "HTI"], [/nomura/i, "NOM"], [/mizuho/i, "MIZ"], [/mufg|mitsubishi ufj/i, "MUFG"],
+  [/jefferies/i, "JEF"], [/lazard/i, "LAZ"], [/rothschild/i, "ROTH"], [/moelis/i, "MOE"],
+  [/evercore/i, "EVR"], [/\bicbc\b/i, "ICBC"], [/societe generale|socgen/i, "SG"],
+  [/credit agricole/i, "CACIB"], [/china renaissance|华兴/i, "CR"], [/\bbnp\b|paribas/i, "BNP"],
+  [/macquarie/i, "MACQ"], [/daiwa/i, "DAIWA"], [/natixis/i, "NATX"], [/\bcmb\b|china merchants/i, "CMBI"],
+  [/guotai|gtja/i, "GTJA"], [/\bboc\b|bank of china/i, "BOCI"], [/\bdbs\b/i, "DBS"],
+];
+function shortFor(company) {
+  for (const [re, s] of NAME_SHORT) if (re.test(company)) return s;
+  const caps = company.replace(/[^A-Za-z& ]/g, "").split(/\s+/).filter(Boolean).map((w) => w[0]).join("").toUpperCase();
+  return (caps.length >= 2 ? caps : company.replace(/[^A-Za-z]/g, "").slice(0, 4) || "IBK").slice(0, 5);
+}
+const liStrip = (s) => (s || "").replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&#\d+;/g, "").replace(/\s+/g, " ").trim();
+
+async function scrapeLinkedIn(today) {
+  const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+  const found = new Map();
+  for (const kw of LI_KEYWORDS) {
+    for (let start = 0; start < 50; start += 10) {
+      const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(kw)}&location=Hong%20Kong&start=${start}`;
+      let html = null;
+      for (let attempt = 0; attempt < 2 && html === null; attempt++) {
+        try {
+          const r = await fetch(url, { headers: { "User-Agent": LI_UA, Accept: "text/html" } });
+          if (r.status === 429) { await sleep(2500); continue; } // 被限流 → 退避重试
+          if (!r.ok) break;
+          html = await r.text();
+        } catch { await sleep(1500); }
+      }
+      if (!html) break;
+      const cards = html.split("base-card relative").slice(1);
+      if (!cards.length) break;
+      for (const c of cards) {
+        const title = liStrip((c.match(/base-search-card__title[^>]*>([\s\S]*?)<\/h3>/) || [])[1]);
+        const comp = liStrip((c.match(/base-search-card__subtitle[^>]*>([\s\S]*?)<\/h4>/) || [])[1]);
+        const loc = liStrip((c.match(/job-search-card__location[^>]*>([\s\S]*?)<\/span>/) || [])[1]);
+        const date = (c.match(/datetime="([^"]+)"/) || [])[1] || "";
+        const u = (c.match(/href="(https:\/\/[^"]*\/jobs\/view\/[^"?]+)/) || [])[1] || "";
+        if (title && comp && u) found.set(u, { title, comp, loc, date, url: u });
+      }
+      await sleep(900); // 礼貌限速
+    }
+  }
+  const jobs = [];
+  for (const r of found.values()) {
+    if (RECRUITERS.test(r.comp)) continue;
+    const fakeBank = { company: r.comp, short: shortFor(r.comp), url: r.url, source: "LinkedIn" };
+    const job = normalize({ title: r.title, level: r.title, location: r.loc, dept: r.title, date: r.date, url: r.url }, fakeBank, today);
+    if (job) jobs.push(job);
+  }
+  return jobs;
+}
+
 // ---------- 主流程 ----------
 const args = process.argv.slice(2);
 const only = (args.find((a) => a.startsWith("--only=")) || "").split("=")[1]?.split(",").map((s) => s.trim());
 const dry = args.includes("--dry");
 const today = new Date();
+// 沙箱/CI 走 TLS 拦截代理时,让 Node 的 fetch(LinkedIn 用)也忽略证书
+if (process.env.IGNORE_HTTPS) process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+const liEnabled = !only || only.includes("LI"); // 默认抓 LinkedIn;--only 指定银行时跳过
 
 const targets = only ? BANKS.filter((b) => only.includes(b.short)) : BANKS;
 
 let prev = [];
 try { prev = JSON.parse(await readFile(JOBS_PATH, "utf8")); } catch { /* 首次运行没有旧文件 */ }
-const prevByFp = new Map(prev.map((j) => [`${j.companyShort}|${j.title}|${j.location}`.toLowerCase(), j]));
+const prevByFp = new Map(prev.map((j) => [fpOf(j.companyShort, j.title), j]));
 
 const browser = await chromium.launch({ headless: !process.env.HEADFUL });
 const ctx = await browser.newContext({
@@ -440,6 +521,22 @@ for (const bank of targets) {
 }
 await browser.close();
 
+// LinkedIn 聚合源(全网公司,量大)
+let liRefreshed = false;
+if (liEnabled) {
+  process.stdout.write(`· LinkedIn 聚合 … `);
+  try {
+    const jobs = await scrapeLinkedIn(today);
+    collected.push(...jobs);
+    liRefreshed = true;
+    report.push(`LinkedIn: ${jobs.length} 个`);
+    console.log(`${jobs.length} 个 HK IBD VP 岗位`);
+  } catch (e) {
+    report.push(`LinkedIn: 失败(${e.message.split("\n")[0]})`);
+    console.log(`失败 — 保留上次结果`);
+  }
+}
+
 // id 稳定:沿用旧 id(保住屁宝在 localStorage 里的进度标记)
 const counters = {};
 function assignId(j) {
@@ -449,17 +546,23 @@ function assignId(j) {
   return `${j.companyShort.toLowerCase()}-${String(counters[j.companyShort]).padStart(3, "0")}`;
 }
 
-// 保留这些公司上次的岗位,避免“整列消失”:抓取失败的,以及本次没在 --only 范围内的
+// 保留这些公司上次的岗位,避免“整列消失”
 const targetShorts = new Set(targets.map((t) => t.short));
-const keptFromPrev = prev.filter(
-  (j) => failedShorts.has(j.companyShort) || !targetShorts.has(j.companyShort)
-);
+const keptFromPrev = prev.filter((j) => {
+  if (j.source === "LinkedIn") return !liRefreshed; // LinkedIn 成功刷新 → 旧 LinkedIn 全部用新结果替换
+  // 官网来源:保留抓取失败的、以及本次没在 --only 范围内的
+  return failedShorts.has(j.companyShort) || !targetShorts.has(j.companyShort);
+});
 let finalJobs = [...collected, ...keptFromPrev];
 
 // 按指纹去重(新抓的优先),分配/沿用 id,清理内部字段
+// 同一岗位跨源去重:官网精确源(直达链接)优先于 LinkedIn 版
 const byFp = new Map();
-for (const j of finalJobs) if (!byFp.has(j._fp ?? `${j.companyShort}|${j.title}|${j.location}`.toLowerCase()))
-  byFp.set(j._fp ?? `${j.companyShort}|${j.title}|${j.location}`.toLowerCase(), j);
+for (const j of finalJobs) {
+  const k = j._fp ?? fpOf(j.companyShort, j.title);
+  const ex = byFp.get(k);
+  if (!ex || (ex.source === "LinkedIn" && j.source !== "LinkedIn")) byFp.set(k, j);
+}
 finalJobs = [...byFp.values()];
 applyHot(finalJobs);
 finalJobs.forEach((j) => { j.id = assignId(j); delete j._fp; });

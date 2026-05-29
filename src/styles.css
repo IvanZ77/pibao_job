@@ -456,6 +456,15 @@ input { font-family: inherit; }
   color: var(--ink);
   text-transform: uppercase;
 }
+.job-flag-src {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  border: 1px solid var(--rule-soft);
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
 
 .job-title {
   font-family: var(--f-serif);

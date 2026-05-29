@@ -157,6 +157,7 @@ export function JobCard({ job, status, onStatus }) {
           </span>
           {job.isNew && <span className="job-flag-new">New</span>}
           {job.isHot && <span className="job-flag-hot">★ Hot</span>}
+          {job.source === "LinkedIn" && <span className="job-flag-src">via LinkedIn</span>}
         </div>
 
         <h4 className="job-title">{job.title}</h4>
