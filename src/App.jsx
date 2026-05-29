@@ -144,16 +144,7 @@ function Hero({ stats, greeting }) {
   );
 }
 
-function FilterBar({
-  activeSector,
-  setActiveSector,
-  sectorCounts,
-  query,
-  setQuery,
-  activeStatus,
-  setActiveStatus,
-  statusCounts,
-}) {
+function FilterBar({ activeSector, setActiveSector, sectorCounts }) {
   return (
     <div className="filter-bar">
       <span className="label-tiny">Sector</span>
@@ -172,37 +163,6 @@ function FilterBar({
           {s} {sectorCounts[s] ? <span className="count">{sectorCounts[s]}</span> : null}
         </button>
       ))}
-      <div className="divider-v"></div>
-      <input
-        className="search-input"
-        placeholder="Search company or title…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-
-      <div className="status-toggle">
-        <button className={activeStatus === "all" ? "active" : ""} onClick={() => setActiveStatus("all")}>
-          All <span className="count">({statusCounts.all})</span>
-        </button>
-        <button
-          className={activeStatus === "interested" ? "active" : ""}
-          onClick={() => setActiveStatus("interested")}
-        >
-          ★ {statusCounts.interested}
-        </button>
-        <button
-          className={activeStatus === "applied" ? "active" : ""}
-          onClick={() => setActiveStatus("applied")}
-        >
-          ✓ {statusCounts.applied}
-        </button>
-        <button
-          className={activeStatus === "hidden" ? "active" : ""}
-          onClick={() => setActiveStatus("hidden")}
-        >
-          Hide {statusCounts.ignored}
-        </button>
-      </div>
     </div>
   );
 }
@@ -348,8 +308,6 @@ function AgentBox({ stats }) {
 export default function App() {
   const [statuses, setStatuses] = useLocalStorage("pibao-statuses-v1", {});
   const [activeSector, setActiveSector] = useState("ALL");
-  const [query, setQuery] = useState("");
-  const [activeStatus, setActiveStatus] = useState("all");
 
   // Stable greeting per day
   const greeting = useMemo(() => {
@@ -374,41 +332,15 @@ export default function App() {
     return c;
   }, [jobs]);
 
-  const statusCounts = useMemo(() => {
-    const ignored = Object.values(statuses).filter((s) => s === "ignored").length;
-    const applied = Object.values(statuses).filter((s) =>
-      ["applied", "first", "final", "offer"].includes(s)
-    ).length;
-    const interested = Object.values(statuses).filter((s) => s === "interested").length;
-    const all = jobs.length - ignored;
-    return { ignored, applied, interested, all };
-  }, [statuses, jobs]);
-
   const filtered = useMemo(() => {
     return jobs
       .filter((j) => {
-        const st = statuses[j.id];
-        if (activeStatus === "all" && st === "ignored") return false;
-        if (activeStatus === "interested" && st !== "interested") return false;
-        if (activeStatus === "applied" && !["applied", "first", "final", "offer"].includes(st))
-          return false;
-        if (activeStatus === "hidden" && st !== "ignored") return false;
+        if (statuses[j.id] === "ignored") return false; // 忽略的不显示
         if (activeSector !== "ALL" && j.sector !== activeSector) return false;
-        if (query) {
-          const q = query.toLowerCase();
-          if (
-            !(
-              j.company.toLowerCase().includes(q) ||
-              j.title.toLowerCase().includes(q) ||
-              (j.subSector || "").toLowerCase().includes(q)
-            )
-          )
-            return false;
-        }
         return true;
       })
       .sort((a, b) => a.postedDaysAgo - b.postedDaysAgo);
-  }, [jobs, statuses, activeSector, query, activeStatus]);
+  }, [jobs, statuses, activeSector]);
 
   const trackedCount = Object.values(statuses).filter((s) => s && s !== "ignored").length;
   const stats = { ...JOB_STATS, tracked: trackedCount };
@@ -422,11 +354,6 @@ export default function App() {
         activeSector={activeSector}
         setActiveSector={setActiveSector}
         sectorCounts={sectorCounts}
-        query={query}
-        setQuery={setQuery}
-        activeStatus={activeStatus}
-        setActiveStatus={setActiveStatus}
-        statusCounts={statusCounts}
       />
 
       <main className="main">
