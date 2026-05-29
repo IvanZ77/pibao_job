@@ -415,6 +415,13 @@ const LI_KEYWORDS = [
   "Debt Capital Markets Vice President",
   "Leveraged Finance Vice President",
   "Coverage Banker Vice President",
+  // 按 sector 多搜几轮,挖出板块专属岗位
+  "Healthcare Investment Banking Vice President",
+  "TMT Investment Banking Vice President",
+  "FIG Investment Banking Vice President",
+  "Real Estate Investment Banking Vice President",
+  "Industrials Investment Banking Vice President",
+  "Financial Sponsors Vice President",
 ];
 const LI_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 // 排除猎头 / 招聘代理(LinkedIn 上大量转贴)
@@ -444,7 +451,7 @@ async function scrapeLinkedIn(today) {
   const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
   const found = new Map();
   for (const kw of LI_KEYWORDS) {
-    for (let start = 0; start < 50; start += 10) {
+    for (let start = 0; start < 30; start += 10) {
       const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(kw)}&location=Hong%20Kong&start=${start}`;
       let html = null;
       for (let attempt = 0; attempt < 2 && html === null; attempt++) {

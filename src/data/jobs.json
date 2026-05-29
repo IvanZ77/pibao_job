@@ -1,29 +1,5 @@
 [
   {
-    "company": "Goldman Sachs",
-    "companyShort": "GS",
-    "logoColor": "#7399C6",
-    "logoBg": "#0A2540",
-    "title": "Global Banking & Markets, Investment Banking, Consumer Retail Group (CRG), Vice President, Hong Kong",
-    "sector": "M&A",
-    "subSector": "",
-    "location": "Hong Kong",
-    "postedDaysAgo": 0,
-    "postedDate": "2026-05-29",
-    "salary": "Competitive",
-    "jdSummary": "Goldman Sachs M&A VP 岗位,香港。详情见原始招聘页。",
-    "keyReqs": [
-      "M&A",
-      "Vice President",
-      "Hong Kong"
-    ],
-    "applyUrl": "https://higher.gs.com/roles/169612",
-    "isNew": true,
-    "source": "官网",
-    "isHot": true,
-    "id": "gs-001"
-  },
-  {
     "company": "Citi",
     "companyShort": "Citi",
     "logoColor": "#FFFFFF",
@@ -46,6 +22,30 @@
     "source": "官网",
     "isHot": false,
     "id": "citi-001"
+  },
+  {
+    "company": "Goldman Sachs",
+    "companyShort": "GS",
+    "logoColor": "#7399C6",
+    "logoBg": "#0A2540",
+    "title": "Global Banking & Markets, Investment Banking, Consumer Retail Group (CRG), Vice President, Hong Kong",
+    "sector": "M&A",
+    "subSector": "",
+    "location": "Hong Kong",
+    "postedDaysAgo": 0,
+    "postedDate": "2026-05-29",
+    "salary": "Competitive",
+    "jdSummary": "Goldman Sachs M&A VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "M&A",
+      "Vice President",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://higher.gs.com/roles/169612",
+    "isNew": true,
+    "source": "官网",
+    "isHot": true,
+    "id": "gs-001"
   },
   {
     "company": "Barclays",
@@ -216,6 +216,30 @@
     "id": "db-001"
   },
   {
+    "company": "Deutsche Bank",
+    "companyShort": "DB",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#0018A8",
+    "title": "IB - Equity Capital Markets - VP & below",
+    "sector": "ECM",
+    "subSector": "Equity Capital Markets",
+    "location": "Hong Kong, Hong Kong SAR",
+    "postedDaysAgo": 19,
+    "postedDate": "2026-05-10",
+    "salary": "Competitive",
+    "jdSummary": "Deutsche Bank ECM VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "ECM",
+      "IB - Equity Capital Markets - VP & below",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://hk.linkedin.com/jobs/view/ib-equity-capital-markets-vp-below-at-deutsche-bank-4381977095",
+    "isNew": false,
+    "source": "LinkedIn",
+    "isHot": false,
+    "id": "db-001"
+  },
+  {
     "company": "Jefferies",
     "companyShort": "JEF",
     "logoColor": "#FFFFFF",
@@ -238,5 +262,29 @@
     "source": "LinkedIn",
     "isHot": false,
     "id": "jef-001"
+  },
+  {
+    "company": "JPC Corporation",
+    "companyShort": "JC",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#0E1E2B",
+    "title": "SPONSOR PRINCIPAL / EXECUTIVE DIRECTOR INVESTMENT BANKING - China State‑Owned Enterprise | SFC Licensed Type 6 Corporation / Advising on Corporate Finance (Central District)",
+    "sector": "M&A",
+    "subSector": "",
+    "location": "Hong Kong, Hong Kong SAR",
+    "postedDaysAgo": 42,
+    "postedDate": "2026-04-17",
+    "salary": "Competitive",
+    "jdSummary": "JPC Corporation M&A VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "M&A",
+      "SPONSOR PRINCIPAL / EXECUTIVE DIRECTOR INVESTMENT BANKING - China State‑Owned Enterprise | SFC Licensed Type 6 Corporation / Advising on Corporate Finance (Central District)",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://hk.linkedin.com/jobs/view/sponsor-principal-executive-director-investment-banking-china-state%E2%80%91owned-enterprise-sfc-licensed-type-6-corporation-advising-on-corporate-finance-central-district-at-jpc-corporation-4402744268",
+    "isNew": false,
+    "source": "LinkedIn",
+    "isHot": false,
+    "id": "jc-001"
   }
 ]
