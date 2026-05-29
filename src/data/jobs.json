@@ -1,5 +1,51 @@
 [
   {
+    "company": "Citi",
+    "companyShort": "Citi",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#003B70",
+    "title": "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
+    "sector": "ECM",
+    "subSector": "Equity Capital Markets",
+    "location": "Hong Kong",
+    "postedDaysAgo": 0,
+    "postedDate": "2026-05-29",
+    "salary": "Competitive",
+    "jdSummary": "Citi ECM VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "ECM",
+      "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://jobs.citi.com/job/hong-kong/vice-president-apac-ecm-syndicate-investment-banking-hong-kong/287/95121573024",
+    "isNew": true,
+    "isHot": false,
+    "id": "citi-001"
+  },
+  {
+    "company": "Barclays",
+    "companyShort": "BARC",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#00AEEF",
+    "title": "Non-Bank Financial Institutions (NBFI) Coverage Banker, Vice President",
+    "sector": "FIG",
+    "subSector": "Financial Institutions",
+    "location": "Hong Kong",
+    "postedDaysAgo": 0,
+    "postedDate": "2026-05-29",
+    "salary": "Competitive",
+    "jdSummary": "Barclays FIG VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "FIG",
+      "Non-Bank Financial Institutions (NBFI) Coverage Banker, Vice President",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://search.jobs.barclays/job/hong-kong/non-bank-financial-institutions-nbfi-coverage-banker-vice-president/13015/95577950112",
+    "isNew": true,
+    "isHot": false,
+    "id": "barc-001"
+  },
+  {
     "company": "Goldman Sachs",
     "companyShort": "GS",
     "logoColor": "#7399C6",

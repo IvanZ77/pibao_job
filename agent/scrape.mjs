@@ -28,10 +28,10 @@ const BANKS = [
   { company: "Goldman Sachs", short: "GS", url: "https://higher.gs.com/results?LOCATION=Hong+Kong&DIVISION=Investment+Banking" },
   { company: "Morgan Stanley", short: "MS", url: "https://morganstanley.eightfold.ai/careers?location=Hong%20Kong&query=Investment%20Banking" },
   { company: "J.P. Morgan", short: "JPM", url: "https://careers.jpmorgan.com/global/en/search-results?keywords=Investment%20Banking%20Vice%20President&location=Hong%20Kong" },
-  { company: "Citi", short: "Citi", url: "https://jobs.citi.com/search-jobs/Investment%20Banking%20Hong%20Kong" },
+  { company: "Citi", short: "Citi", adapter: "phenom", url: "https://jobs.citi.com/search-jobs?k=Investment%20Banking&l=Hong%20Kong" },
   { company: "Bank of America", short: "BofA", url: "https://careers.bankofamerica.com/en-us/job-search?ref=search&search=investment%20banking&location=Hong%20Kong" },
   { company: "UBS", short: "UBS", url: "https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?PageType=JobDetails&partnerid=25008&siteid=5012" },
-  { company: "Barclays", short: "BARC", url: "https://search.jobs.barclays/search-jobs/Investment%20Banking/Hong%20Kong" },
+  { company: "Barclays", short: "BARC", adapter: "phenom", url: "https://search.jobs.barclays/search-jobs?k=Investment%20Banking&l=Hong%20Kong" },
   { company: "Deutsche Bank", short: "DB", url: "https://careers.db.com/professionals/search-roles/#/professional/result?Location=Hong+Kong&BusinessArea=Investment+Bank" },
   { company: "HSBC", short: "HSBC", url: "https://mycareer.hsbc.com/en_GB/external/SearchJobs/?3_56_3=2030" },
   { company: "Standard Chartered", short: "SC", url: "https://jobs.standardchartered.com/search-jobs/Investment%20Banking/Hong%20Kong" },
@@ -161,7 +161,47 @@ function toRaw(o, origin) {
 }
 
 // ---------- 抓取策略 ----------
+// Phenom 招聘平台(Citi / Barclays 等):职位是 HTML 渲染的,DOM 抓 #search-results-list,
+// 城市从职位链接 /job/<city>/ 解析,翻页用 &p=N
+async function scrapePhenom(ctx, bank, today) {
+  const page = await ctx.newPage();
+  const all = new Map();
+  try {
+    for (let p = 1; p <= 5; p++) {
+      const u = bank.url + (bank.url.includes("?") ? "&" : "?") + "p=" + p;
+      await page.goto(u, { waitUntil: "domcontentloaded", timeout: 40000 });
+      await page.waitForTimeout(2500);
+      const rows = await page.evaluate(() => {
+        const list = document.querySelector("#search-results-list");
+        if (!list) return [];
+        const seen = new Set();
+        const out = [];
+        list.querySelectorAll("a[href*='/job/']").forEach((a) => {
+          if (seen.has(a.href)) return;
+          seen.add(a.href);
+          const city = (a.href.match(/\/job\/([^/]+)\//) || [])[1] || "";
+          out.push({ title: (a.textContent || "").trim(), href: a.href, city });
+        });
+        return out;
+      });
+      if (!rows.length) break;
+      const before = all.size;
+      rows.forEach((r) => all.set(r.href, r));
+      if (all.size === before) break; // 没有新职位 → 已到末页
+    }
+  } finally {
+    await page.close();
+  }
+  return [...all.values()]
+    .map((r) => {
+      const loc = r.city.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      return normalize({ title: r.title, level: r.title, location: loc, dept: r.title, date: "", url: r.href }, bank, today);
+    })
+    .filter(Boolean);
+}
+
 async function scrapeBank(ctx, bank, today) {
+  if (bank.adapter === "phenom") return scrapePhenom(ctx, bank, today);
   const origin = new URL(bank.url).origin;
   const isGS = /higher\.gs\.com/.test(bank.url);
   const page = await ctx.newPage();
