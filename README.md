@@ -54,9 +54,38 @@ Field notes:
 - `postedDaysAgo` drives the "New Today" / "This Week" stats and the recency sort.
 - `isNew` / `isHot` are optional flags for the New / ★ Hot badges.
 
-> Scraping itself is **not** wired up yet — this build provides the structure and the
-> JSON contract so an agent can populate it. The current `jobs.json` holds 22 realistic
-> mock roles.
+## Daily scraping
+
+A real Playwright-based scraper lives in `agent/scrape.mjs`. It drives a headless
+Chromium, intercepts each bank's own job API/JSON, filters to **Hong Kong · IBD · VP**
+roles, and merges the result into `src/data/jobs.json` (id-stable, so 屁宝's tracker
+progress survives refreshes).
+
+```bash
+npm run scrape                 # scrape all banks → update jobs.json
+node agent/scrape.mjs --only=GS --dry   # debug one bank, don't write
+HEADFUL=1 node agent/scrape.mjs         # watch the browser (local debugging)
+IGNORE_HTTPS=1 node agent/scrape.mjs    # behind a TLS-intercepting proxy/CI
+```
+
+Status of the adapters:
+
+- **Goldman Sachs** has a fully working dedicated adapter (its GraphQL `roleSearch`
+  feed, with structured level/location/division filtering) — it pulls **real, live**
+  HK IBD VP roles today.
+- The other 21 banks use a **generic JSON interceptor** that works when a site exposes
+  a discoverable jobs API, and falls back gracefully (a bank that yields nothing keeps
+  its previous entries instead of disappearing). Each one may need per-bank tuning the
+  way Goldman was done — career sites differ in JSON shape, and several (Workday-based)
+  need their exact site URL discovered first.
+
+So `jobs.json` is currently **mixed**: Goldman is live-scraped; the rest remain the
+seeded mock roles until their adapter is tuned.
+
+The scrape runs automatically every morning via `.github/workflows/scrape.yml`
+(05:30 HKT), which commits the refreshed `jobs.json` and thereby triggers a redeploy.
+
+See `agent/daily-scrape-prompt.md` for the full intent/spec an agent should follow.
 
 ## Application tracker
 
