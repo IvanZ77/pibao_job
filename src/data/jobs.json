@@ -1,29 +1,5 @@
 [
   {
-    "company": "Citi",
-    "companyShort": "Citi",
-    "logoColor": "#FFFFFF",
-    "logoBg": "#003B70",
-    "title": "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
-    "sector": "ECM",
-    "subSector": "Equity Capital Markets",
-    "location": "Hong Kong",
-    "postedDaysAgo": 0,
-    "postedDate": "2026-05-29",
-    "salary": "Competitive",
-    "jdSummary": "Citi ECM VP 岗位,香港。详情见原始招聘页。",
-    "keyReqs": [
-      "ECM",
-      "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
-      "Hong Kong"
-    ],
-    "applyUrl": "https://jobs.citi.com/job/hong-kong/vice-president-apac-ecm-syndicate-investment-banking-hong-kong/287/95121573024",
-    "isNew": true,
-    "source": "官网",
-    "isHot": false,
-    "id": "citi-001"
-  },
-  {
     "company": "Goldman Sachs",
     "companyShort": "GS",
     "logoColor": "#7399C6",
@@ -46,6 +22,30 @@
     "source": "官网",
     "isHot": true,
     "id": "gs-001"
+  },
+  {
+    "company": "Citi",
+    "companyShort": "Citi",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#003B70",
+    "title": "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
+    "sector": "ECM",
+    "subSector": "Equity Capital Markets",
+    "location": "Hong Kong",
+    "postedDaysAgo": 0,
+    "postedDate": "2026-05-29",
+    "salary": "Competitive",
+    "jdSummary": "Citi ECM VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "ECM",
+      "Vice President, APAC ECM Syndicate, Investment Banking, Hong Kong",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://jobs.citi.com/job/hong-kong/vice-president-apac-ecm-syndicate-investment-banking-hong-kong/287/95121573024",
+    "isNew": true,
+    "source": "官网",
+    "isHot": false,
+    "id": "citi-001"
   },
   {
     "company": "Barclays",
@@ -80,7 +80,7 @@
     "sector": "M&A",
     "subSector": "Advisory",
     "location": "Hong Kong SAR",
-    "postedDaysAgo": 1,
+    "postedDaysAgo": 2,
     "postedDate": "2026-05-28",
     "salary": "Competitive",
     "jdSummary": "JPMorganChase M&A VP 岗位,香港。详情见原始招聘页。",
@@ -90,7 +90,7 @@
       "Hong Kong"
     ],
     "applyUrl": "https://hk.linkedin.com/jobs/view/vice-president-apac-mergers-acquisitions-and-capital-markets-legal-at-jpmorganchase-4411258643",
-    "isNew": true,
+    "isNew": false,
     "source": "LinkedIn",
     "isHot": false,
     "id": "jpm-001"
@@ -104,7 +104,7 @@
     "sector": "M&A",
     "subSector": "",
     "location": "Kowloon, Hong Kong SAR",
-    "postedDaysAgo": 3,
+    "postedDaysAgo": 4,
     "postedDate": "2026-05-26",
     "salary": "Competitive",
     "jdSummary": "Santander M&A VP 岗位,香港。详情见原始招聘页。",
@@ -120,6 +120,30 @@
     "id": "sant-001"
   },
   {
+    "company": "DBS Bank",
+    "companyShort": "DBS",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#0E1E2B",
+    "title": "VP, Corporate Finance, DBS Asia Capital (Licensed)",
+    "sector": "M&A",
+    "subSector": "",
+    "location": "Hong Kong, Hong Kong SAR",
+    "postedDaysAgo": 12,
+    "postedDate": "2026-05-18",
+    "salary": "Competitive",
+    "jdSummary": "DBS Bank M&A VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "M&A",
+      "VP, Corporate Finance, DBS Asia Capital (Licensed)",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://hk.linkedin.com/jobs/view/vp-corporate-finance-dbs-asia-capital-licensed-at-dbs-bank-4415809615",
+    "isNew": false,
+    "source": "LinkedIn",
+    "isHot": false,
+    "id": "dbs-001"
+  },
+  {
     "company": "Houlihan Lokey",
     "companyShort": "HL",
     "logoColor": "#FFFFFF",
@@ -128,7 +152,7 @@
     "sector": "M&A",
     "subSector": "Advisory",
     "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 11,
+    "postedDaysAgo": 12,
     "postedDate": "2026-05-18",
     "salary": "Competitive",
     "jdSummary": "Houlihan Lokey M&A VP 岗位,香港。详情见原始招聘页。",
@@ -152,7 +176,7 @@
     "sector": "M&A",
     "subSector": "Advisory",
     "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 11,
+    "postedDaysAgo": 12,
     "postedDate": "2026-05-18",
     "salary": "Competitive",
     "jdSummary": "ICBC International M&A VP 岗位,香港。详情见原始招聘页。",
@@ -168,6 +192,30 @@
     "id": "icbc-001"
   },
   {
+    "company": "Deutsche Bank",
+    "companyShort": "DB",
+    "logoColor": "#FFFFFF",
+    "logoBg": "#0018A8",
+    "title": "IBCM - M&A - VP",
+    "sector": "M&A",
+    "subSector": "Advisory",
+    "location": "Hong Kong, Hong Kong SAR",
+    "postedDaysAgo": 15,
+    "postedDate": "2026-05-15",
+    "salary": "Competitive",
+    "jdSummary": "Deutsche Bank M&A VP 岗位,香港。详情见原始招聘页。",
+    "keyReqs": [
+      "M&A",
+      "IBCM - M&A - VP",
+      "Hong Kong"
+    ],
+    "applyUrl": "https://hk.linkedin.com/jobs/view/ibcm-m-a-vp-at-deutsche-bank-4405801823",
+    "isNew": false,
+    "source": "LinkedIn",
+    "isHot": false,
+    "id": "db-001"
+  },
+  {
     "company": "Jefferies",
     "companyShort": "JEF",
     "logoColor": "#FFFFFF",
@@ -176,7 +224,7 @@
     "sector": "FIG",
     "subSector": "Financial Institutions",
     "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 14,
+    "postedDaysAgo": 15,
     "postedDate": "2026-05-15",
     "salary": "Competitive",
     "jdSummary": "Jefferies FIG VP 岗位,香港。详情见原始招聘页。",
@@ -196,35 +244,11 @@
     "companyShort": "DB",
     "logoColor": "#FFFFFF",
     "logoBg": "#0018A8",
-    "title": "IBCM - M&A - VP",
-    "sector": "M&A",
-    "subSector": "Advisory",
-    "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 14,
-    "postedDate": "2026-05-15",
-    "salary": "Competitive",
-    "jdSummary": "Deutsche Bank M&A VP 岗位,香港。详情见原始招聘页。",
-    "keyReqs": [
-      "M&A",
-      "IBCM - M&A - VP",
-      "Hong Kong"
-    ],
-    "applyUrl": "https://hk.linkedin.com/jobs/view/ibcm-m-a-vp-at-deutsche-bank-4405801823",
-    "isNew": false,
-    "source": "LinkedIn",
-    "isHot": false,
-    "id": "db-001"
-  },
-  {
-    "company": "Deutsche Bank",
-    "companyShort": "DB",
-    "logoColor": "#FFFFFF",
-    "logoBg": "#0018A8",
     "title": "IB - Equity Capital Markets - VP & below",
     "sector": "ECM",
     "subSector": "Equity Capital Markets",
     "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 19,
+    "postedDaysAgo": 20,
     "postedDate": "2026-05-10",
     "salary": "Competitive",
     "jdSummary": "Deutsche Bank ECM VP 岗位,香港。详情见原始招聘页。",
@@ -248,7 +272,7 @@
     "sector": "Industrials",
     "subSector": "Industrials",
     "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 29,
+    "postedDaysAgo": 30,
     "postedDate": "2026-04-30",
     "salary": "Competitive",
     "jdSummary": "Jefferies Industrials VP 岗位,香港。详情见原始招聘页。",
@@ -262,29 +286,5 @@
     "source": "LinkedIn",
     "isHot": false,
     "id": "jef-001"
-  },
-  {
-    "company": "JPC Corporation",
-    "companyShort": "JC",
-    "logoColor": "#FFFFFF",
-    "logoBg": "#0E1E2B",
-    "title": "SPONSOR PRINCIPAL / EXECUTIVE DIRECTOR INVESTMENT BANKING - China State‑Owned Enterprise | SFC Licensed Type 6 Corporation / Advising on Corporate Finance (Central District)",
-    "sector": "M&A",
-    "subSector": "",
-    "location": "Hong Kong, Hong Kong SAR",
-    "postedDaysAgo": 42,
-    "postedDate": "2026-04-17",
-    "salary": "Competitive",
-    "jdSummary": "JPC Corporation M&A VP 岗位,香港。详情见原始招聘页。",
-    "keyReqs": [
-      "M&A",
-      "SPONSOR PRINCIPAL / EXECUTIVE DIRECTOR INVESTMENT BANKING - China State‑Owned Enterprise | SFC Licensed Type 6 Corporation / Advising on Corporate Finance (Central District)",
-      "Hong Kong"
-    ],
-    "applyUrl": "https://hk.linkedin.com/jobs/view/sponsor-principal-executive-director-investment-banking-china-state%E2%80%91owned-enterprise-sfc-licensed-type-6-corporation-advising-on-corporate-finance-central-district-at-jpc-corporation-4402744268",
-    "isNew": false,
-    "source": "LinkedIn",
-    "isHot": false,
-    "id": "jc-001"
   }
 ]
