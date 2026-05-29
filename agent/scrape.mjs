@@ -45,7 +45,7 @@ const BANKS = [
   { company: "Jefferies", short: "JEF", url: "https://jefferies.tal.net/vx/lang-en-GB/mobile-0/appcentre-1/brand-2/candidate/jobboard/vacancy/1/adv/" },
   { company: "Lazard", short: "LAZ", url: "https://www.lazard.com/careers/job-search/" },
   { company: "Rothschild & Co", short: "ROTH", url: "https://www.rothschildandco.com/en/careers/job-search/" },
-  { company: "Moelis & Company", short: "MOE", url: "https://moelis.wd1.myworkdayjobs.com/Experienced" },
+  { company: "Moelis & Company", short: "MOE", url: "https://moelis.wd1.myworkdayjobs.com/Experienced-Hires" },
   { company: "Evercore", short: "EVR", url: "https://evercore.wd1.myworkdayjobs.com/Evercore" },
 ];
 
