@@ -26,7 +26,7 @@ const JOBS_PATH = join(__dirname, "..", "src", "data", "jobs.json");
 // 其余走通用 JSON 拦截器。每家可按需补一个 search query 收窄到 HK / IBD。
 const BANKS = [
   { company: "Goldman Sachs", short: "GS", url: "https://higher.gs.com/results?LOCATION=Hong+Kong&DIVISION=Investment+Banking" },
-  { company: "Morgan Stanley", short: "MS", url: "https://morganstanley.eightfold.ai/careers?location=Hong%20Kong&query=Investment%20Banking" },
+  { company: "Morgan Stanley", short: "MS", adapter: "eightfold", url: "https://morganstanley.eightfold.ai/careers?query=Investment%20Banking&location=Hong%20Kong&domain=morganstanley.com" },
   { company: "J.P. Morgan", short: "JPM", url: "https://careers.jpmorgan.com/global/en/search-results?keywords=Investment%20Banking%20Vice%20President&location=Hong%20Kong" },
   { company: "Citi", short: "Citi", adapter: "phenom", url: "https://jobs.citi.com/search-jobs?k=Investment%20Banking&l=Hong%20Kong" },
   { company: "Bank of America", short: "BofA", url: "https://careers.bankofamerica.com/en-us/job-search?ref=search&search=investment%20banking&location=Hong%20Kong" },
@@ -200,7 +200,67 @@ async function scrapePhenom(ctx, bank, today) {
     .filter(Boolean);
 }
 
+// Eightfold AI 平台(Morgan Stanley 等):职位走 /api/pcsx/search 返回 data.positions。
+// 拦截首个请求拿到完整 query,再用同源 fetch 翻页拉全。
+async function scrapeEightfold(ctx, bank, today) {
+  const origin = new URL(bank.url).origin;
+  const domain = new URL(bank.url).searchParams.get("domain") || "";
+  const page = await ctx.newPage();
+  let apiUrl = null;
+  const positions = [];
+  page.on("response", async (r) => {
+    if (/\/api\/pcsx\/search/.test(r.url())) {
+      if (!apiUrl) apiUrl = r.url();
+      try {
+        const pos = (await r.json())?.data?.positions;
+        if (Array.isArray(pos)) positions.push(...pos);
+      } catch { /* ignore */ }
+    }
+  });
+  try {
+    await page.goto(bank.url, { waitUntil: "domcontentloaded", timeout: 40000 });
+    await page.waitForTimeout(4000);
+    if (apiUrl) {
+      const more = await page.evaluate(async (apiUrl) => {
+        const out = [];
+        const base = new URL(apiUrl);
+        for (let start = 0; start < 80; start += 20) {
+          base.searchParams.set("start", start);
+          base.searchParams.set("num", 20);
+          const r = await fetch(base.toString(), { headers: { Accept: "application/json" } });
+          if (!r.ok) break;
+          const pos = (await r.json())?.data?.positions || [];
+          out.push(...pos);
+          if (pos.length < 20) break;
+        }
+        return out;
+      }, apiUrl);
+      positions.push(...more);
+    }
+  } finally {
+    await page.close();
+  }
+  const seen = new Set();
+  const raws = [];
+  for (const p of positions) {
+    const id = p.id || p.displayJobId || p.name;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const loc = Array.isArray(p.locations) ? p.locations.join(", ") : p.locations || "";
+    raws.push({
+      title: p.name || "",
+      level: p.name || "",
+      location: loc,
+      dept: p.department || "",
+      date: p.postedTs ? new Date(p.postedTs).toISOString() : "",
+      url: `${origin}/careers?pid=${p.id}&domain=${domain}`,
+    });
+  }
+  return raws.map((r) => normalize(r, bank, today)).filter(Boolean);
+}
+
 async function scrapeBank(ctx, bank, today) {
+  if (bank.adapter === "eightfold") return scrapeEightfold(ctx, bank, today);
   if (bank.adapter === "phenom") return scrapePhenom(ctx, bank, today);
   const origin = new URL(bank.url).origin;
   const isGS = /higher\.gs\.com/.test(bank.url);
